@@ -2,7 +2,12 @@
 
 class Container
 {
+
+    private $pdo;
     private $configuration;
+    private $shipLoader;
+    private $battleManager;
+
     public function __construct(array $configuration)
     {
         $this->configuration = $configuration;
@@ -12,12 +17,38 @@ class Container
      */
     public function getPDO()
     {
-        $pdo = new PDO(
-            $this->configuration['db_dsn'],
-            $this->configuration['db_user'],
-            $this->configuration['db_pass']
-        );
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        return $pdo;
+
+        if ($this->pdo === null) {
+            $this->pdo = new PDO(
+
+
+                $this->configuration['db_dsn'],
+                $this->configuration['db_user'],
+                $this->configuration['db_pass']
+            );
+            $this->pdo->setAttribute(PDO::ERRMODE_EXCEPTION, PDO::ERRMODE_EXCEPTION);
+        }
+        return $this->pdo;
     }
-}
+
+    /**
+     * @return ShipLoader
+     */
+    public function getShipLoader()
+    {
+        if($this->shipLoader === null){
+            $this->shipLoader = new ShipLoader($this->getPDO());
+        }
+        return $this->shipLoader;
+    }
+
+    public function getbattleManager()
+    {
+
+        if($this->battleManager === null){
+            $this->battleManager = new BattleManager();
+        }
+        return $this->battleManager;
+    }
+
+    }
